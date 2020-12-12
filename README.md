@@ -37,6 +37,6 @@ $ ansible-playbook -i inventory --ask-vault-pass -K factorio-up.yml
 ### Running remotely
 You can run this ansible playbook aginst a remote host.. just update your inventory file to include the host that you're trying to reach, and remove or comment the "connection: local" line. Everything else should be pretty much the same, unless you need to specify an ssh password, in which case, add -k.
 ```bash
-$ ansible-playbook -i inventory factorio-edited.yml -kK
+$ ansible-playbook -i inventory factorio-edited.yml --ask-vault-pass -kK
 ```
 That should get you going.
