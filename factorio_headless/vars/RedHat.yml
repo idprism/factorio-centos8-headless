@@ -1,0 +1,9 @@
+---
+# os-specific names for fedora/redhat/centos
+curl_package: curl
+wget_package: wget
+git_package: git
+bash_completion_package: bash-completion
+python_package: python36 # alternative python3.8
+pyparsing_package: python3-pyparsing # this was required for mod updater iirc
+use_systemd: true

@@ -1,0 +1,6 @@
+---
+# handlers file for factorio_headless
+- name: restart factorio systemd
+  service:
+    name: factorio
+    state: restarted

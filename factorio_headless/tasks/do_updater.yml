@@ -1,0 +1,10 @@
+---
+- name: git clone factorio updater utility
+  git:
+    repo: "{{ github_method }}/{{ factorio_updater_github }}"
+    dest: "{{ base_directory }}/{{ factorio_updater_folder }}"
+    clone: yes
+    update: yes
+
+# is that it?
+# -- yes. factorio-init calls updater with options from its own config

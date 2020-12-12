@@ -1,0 +1,23 @@
+---
+# this directive will allow people to do things with OS's
+# other than CentOS8
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version}}.yml"
+    - "{{ ansible_os_family }}.yml"
+  tags: vars
+
+- name: Create directory structure & install all prerequisuite packages
+  include_tasks: prep_system.yml
+
+- name: Grab updater
+  include_tasks: do_updater.yml
+
+- name: Grab mod manager
+  include_tasks: do_modder.yml
+
+- name: Configure the primary configurator tool
+  include_tasks: do_installer.yml

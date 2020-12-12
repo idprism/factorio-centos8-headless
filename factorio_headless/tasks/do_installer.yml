@@ -1,0 +1,95 @@
+---
+# grab the software
+- name: Git Clone factorio-init utility
+  git:
+    repo: "{{ github_method }}/{{ factorio_installer_github }}"
+    dest: "{{ base_directory }}/{{ factorio_installer_folder }}"
+    clone: yes
+    update: yes
+
+# let's follow the readme..., but run actual factorio program last instead of first.
+
+# steps in readme:
+# 1 (moved to last) 'factorio install'
+# 2 Copy/symlink or source the bash_autocompletion file, ensure script is linked into default path
+# 3 Copy the example service, adjust & reload, 
+  #Note that systemd won't be able to keep track of the server process if you use this script (factorio-init)
+  # to restart during updates. Use the config option UPDATE_PREVENT_RESTART=1 and implement your own stop/start logic to work around this.
+# 4 run factorio once to generate save file and config.ini
+
+- name: link the factorio-init binary into the path
+  file:
+    state: link
+    src: "{{ base_directory }}/{{ factorio_installer_folder }}/factorio"
+    dest: /usr/local/bin/factorio
+
+- name: link the auto completion config into the standard location
+  file:
+    state: link
+    src: "{{ base_directory }}/{{ factorio_installer_folder }}/extras/bash_autocomplete"
+    dest: /etc/bash_completion.d/factorio
+
+# the readme for factorio-init encourages you to edit this file.
+# I think the defaults are fine, but just in case you
+# wanted to use this role to modify the file, i've copied it
+# over to the files directory.
+#- name: deploy systemd unit changes
+#  copy:
+#    src: factorio.service
+#    dst: "{{ base_directory }}/{{ factorio_installer_folder }}/extras/factorio.service"
+#    owner: factorio
+#    group: factorio
+#    mode: 644
+
+# I made a variable to gate this statement, cause someone may not be using systemd
+
+- name: enable custom service directly from install path
+  command:
+    cmd: /usr/bin/systemctl enable /opt/factorio-init/extras/factorio.service
+    creates: /etc/systemd/system/factorio.service
+  register: service_file_created
+  when: use_systemd == true
+
+- name: force daemon-reload after service enable
+  systemd:
+    name: factorio
+    daemon_reload: yes
+  when: service_file_created is success
+
+
+# install the headless server as factorio user to make sure nothing is owned by root that we have to change later.
+- name: get cracking -- install headless server as factorio user, using factorio-init
+  command:
+    cmd: /usr/local/bin/factorio install
+    creates: "{{ base_directory }}/{{ factorio_server_dir }}/data"
+  become: true
+  become_user: factorio
+  register: factorio_initial_install
+
+- name: start, stop factorio after initial install, to create savegame file
+  block:
+  - name: start factorio once
+    command:
+      cmd: /usr/local/bin/factorio start
+  - name: stop factorio once
+    command:
+      cmd: /usr/local/bin/factorio stop
+  when: factorio_initial_install.changed
+
+# I was originally going to do this block step by step but decided to import a template from a recent
+# build of factorio-init -- If the diff between config/config.example is too great, update this role
+- name: Create config file for factorio-init.
+  template:
+    src: config.j2
+    dest: "{{ base_directory }}/{{ factorio_installer_folder }}/config"
+    owner: factorio
+    group: factorio
+    mode: '0664'
+  notify: restart factorio systemd
+
+# start the systemd service
+- name: enable factorio systemd unit
+  service:
+    name: factorio
+    enabled: yes
+

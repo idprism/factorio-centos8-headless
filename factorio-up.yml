@@ -1,0 +1,8 @@
+---
+# currently this targets the localhost only.
+# you can always make/use an inventory file to apply roles elsewhere.
+- name: Factorio UP and Running
+  hosts: localhost
+  become: yes
+  roles: 
+    - factorio_headless

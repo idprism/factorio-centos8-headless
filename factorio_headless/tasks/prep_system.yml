@@ -1,0 +1,73 @@
+---
+# i will not bother checking glibc, as centos8 is going to abandon LTS
+# so it should always be "new enough"
+
+- name: prereq package install for all tools
+  package:
+    name:
+    - "{{ curl_package }}"
+    - "{{ wget_package }}"
+    - "{{ git_package }}"
+    - "{{ bash_completion_package }}"
+    - "{{ python_package }}"
+    - "{{ pyparsing_package }}"
+    state: present
+
+# the user and group that run the server
+# hopefully this is the only user you have
+# if not, alter uid_number & gid_number in vars.
+- name: Ensure Factorio Group exists
+  group:
+    name: factorio
+    gid: "{{ gid_number }}"
+    state: present
+- name: Ensure Factorio User exists
+  user:
+    name: factorio
+    comment: Ichabod Wube
+    uid: "{{ uid_number }}"
+    group: factorio
+    groups: wheel
+    append: yes
+    state: present
+
+# /opt by default
+- name: Base Directory
+  file:
+    state: directory
+    path: "{{ base_directory}}"
+    owner: factorio
+    group: factorio
+    mode: '0755'
+# /opt/factorio by default
+- name: Game Directory
+  file:
+    state: directory
+    path: "{{ base_directory}}/{{ factorio_server_dir }}"
+    owner: factorio
+    group: factorio
+    mode: '0755'
+
+# create tools directories for the git pulls
+- name: Installer Dir
+  file:
+    state: directory
+    path: "{{ base_directory }}/{{ factorio_installer_folder }}"
+    owner: factorio
+    group: factorio
+    mode: '0755'
+- name: Updater Dir
+  file:
+    state: directory
+    path: "{{ base_directory }}/{{ factorio_updater_folder }}"
+    owner: factorio
+    group: factorio
+    mode: '0755'
+- name: Modder Dir
+  file:
+    state: directory
+    path: "{{ base_directory }}/{{ factorio_modder_folder }}"
+    owner: factorio
+    group: factorio
+    mode: '0755'
+

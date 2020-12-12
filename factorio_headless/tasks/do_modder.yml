@@ -1,0 +1,10 @@
+---
+- name: Git Clone factorio mod installer utility
+  git:
+    repo: "{{ github_method }}/{{ factorio_modder_github }}"
+    dest: "{{ base_directory }}/{{ factorio_modder_folder }}"
+    clone: yes
+    update: yes
+
+# seems like that's it for this one too. the modder is managed by factorio-init
+# :)

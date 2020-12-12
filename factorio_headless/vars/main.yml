@@ -1,0 +1,34 @@
+---
+# vars file for factorio_centos8_headless
+base_directory: /opt
+factorio_server_dir: factorio
+factorio_server_port: 34197
+# the uid/gid for the factorio user
+uid_number: 1000
+gid_number: 1000
+
+github_method: https://github.com/
+# alternative method --> ssh
+# github_method: git@github.com:
+factorio_installer_github: Bisa/factorio-init.git
+factorio_installer_folder: factorio-init
+
+factorio_updater_github: narc0tiq/factorio-updater
+factorio_updater_folder: factorio-updater
+
+factorio_modder_github: pdemonaco/factorio-mod-updater
+factorio_modder_folder: factorio-mods-manager
+
+factorio_account_username: CHANGEME
+factorio_account_token: CHANGEME
+
+#settings for the factorio-init config file (0=no, 1=yes)
+# install experimental/beta versions of the server on update?
+experimental_updates: 0
+# update files will go in {{ updatefile_caching_location }}/factorio-update/
+updatefile_caching_location: /tmp
+# clean/dont clean up downloaded update files
+indefinitely_save_updatefiles: 0
+# prevent factorio-init from restarting the server (including after an update)
+#  note: you will probably have to run: sudo systemctl stop factorio; factorio update; sudo systemctl start factorio
+disable_factorio_init_server_restarts: 1
