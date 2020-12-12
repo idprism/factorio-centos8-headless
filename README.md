@@ -40,3 +40,11 @@ You can run this ansible playbook aginst a remote host.. just update your invent
 $ ansible-playbook -i inventory factorio-edited.yml --ask-vault-pass -kK
 ```
 That should get you going.
+
+----
+
+### Props
+* https://github.com/Bisa/factorio-init
+* https://github.com/narc0tiq/factorio-updater
+* https://github.com/pdemonaco/factorio-mod-updater
+* Wube for making headless server free.
