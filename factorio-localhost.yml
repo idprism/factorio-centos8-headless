@@ -3,6 +3,7 @@
 # you can always make/use an inventory file to apply roles elsewhere.
 - name: Factorio UP and Running
   hosts: localhost
+  connection: local
   become: yes
   roles: 
     - factorio_headless

@@ -2,4 +2,4 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - factorio_centos8_headless
+    - factorio_headless
