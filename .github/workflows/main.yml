@@ -46,7 +46,6 @@ jobs:
           #  ansible-lint==4.2.0
           # [optional]
           # Arguments to be passed to the ansible-lint
-          skip_list: '303'
           # Options:
           #   -q                    quieter, although not silent output
           #   -p                    parseable output in the format of pep8
@@ -66,4 +65,4 @@ jobs:
           #                         path to directories or files to skip. This option is
           #                         repeatable.
           #   -c C                  Specify configuration file to use. Defaults to ".ansible-lint"
-          args: ""
+          args: "-w 303"
