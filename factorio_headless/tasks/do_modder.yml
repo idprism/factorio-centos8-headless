@@ -5,6 +5,7 @@
     dest: "{{ base_directory }}/{{ factorio_modder_folder }}"
     clone: yes
     update: yes
+    version: master
 
 # seems like that's it for this one too. the modder is managed by factorio-init
 # :)

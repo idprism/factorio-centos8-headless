@@ -6,6 +6,7 @@
     dest: "{{ base_directory }}/{{ factorio_installer_folder }}"
     clone: yes
     update: yes
+    version: master
 
 # let's follow the readme..., but run actual factorio program last instead of first.
 
@@ -48,7 +49,7 @@
     cmd: /usr/bin/systemctl enable /opt/factorio-init/extras/factorio.service
     creates: /etc/systemd/system/factorio.service
   register: service_file_created
-  when: use_systemd == true
+  when: use_systemd == "true"
 
 - name: force daemon-reload after service enable
   systemd:

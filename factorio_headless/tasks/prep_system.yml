@@ -35,7 +35,7 @@
 - name: Base Directory
   file:
     state: directory
-    path: "{{ base_directory}}"
+    path: "{{ base_directory }}"
     owner: factorio
     group: factorio
     mode: '0755'
@@ -43,7 +43,7 @@
 - name: Game Directory
   file:
     state: directory
-    path: "{{ base_directory}}/{{ factorio_server_dir }}"
+    path: "{{ base_directory }}/{{ factorio_server_dir }}"
     owner: factorio
     group: factorio
     mode: '0755'

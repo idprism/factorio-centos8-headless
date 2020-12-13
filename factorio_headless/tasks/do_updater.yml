@@ -5,6 +5,7 @@
     dest: "{{ base_directory }}/{{ factorio_updater_folder }}"
     clone: yes
     update: yes
+    version: master
 
 # is that it?
 # -- yes. factorio-init calls updater with options from its own config
