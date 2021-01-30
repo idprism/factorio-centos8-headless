@@ -16,11 +16,19 @@ factorio_installer_folder: factorio-init
 factorio_updater_github: narc0tiq/factorio-updater
 factorio_updater_folder: factorio-updater
 
-factorio_modder_github: pdemonaco/factorio-mod-updater
+factorio_modder_github: Tantrisse/Factorio-mods-manager
 factorio_modder_folder: factorio-mods-manager
 
-factorio_account_username: CHANGEME
-factorio_account_token: CHANGEME
+#factorio_account_username: CHANGEME
+#factorio_account_token: CHANGEME
+factorio_account_username: idprism
+factorio_account_token: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          61623565646365316366333863366539633739623362306339303139646631373961346465633338
+          6638633932303661386630343533646434623533623464310a346265343435343865303666643735
+          37333633666338353661353265343464613736383635356265393164626261363635326562303430
+          6661383166323139350a346264333035373833333931353634363831663239353366653739303139
+          38366666376235306461666339393832333066313466376436313534373434396363
 
 #settings for the factorio-init config file (0=no, 1=yes)
 # install experimental/beta versions of the server on update?
