@@ -1,0 +1,54 @@
+---
+# Do all the stuff that's not the other repos
+- name: Ensure firewalld configfile service:factorio
+  ansible.builtin.copy:
+    owner: "root"
+    mode: "644"
+    dest: /etc/firewalld/services/factorio.xml
+    content: |
+      <?xml version="1.0" encoding="utf-8"?>
+      <service>
+        <port port="34197" protocol="udp"/>
+        </service>
+  register: create_firewalld_factorio_service
+
+- name: Hard reload firwalld if new service is installed
+  when: create_firewalld_factorio_service.changed is true
+  ansible.builtin.command:
+    cmd: firewall-cmd --reload
+
+- name: Ensure factorio firewalld allowance (defaultzone)
+  ansible.posix.firewalld:
+    state: enabled
+    service: factorio
+    permanent: true
+    immediate: true
+
+- name: Limit ssh attempts
+  ansible.posix.firewalld:
+    state: enabled
+    rich_rule: rule service name="ssh" audit limit value="5/h" accept
+    permanent: true
+    immediate: true
+
+- name: Install a fail2ban on fedora
+  ansible.builtin.package:
+    pkg: fail2ban
+    state: present
+
+- name: Config sshd fail2ban on fedora
+  ansible.builtin.copy:
+    owner: "root"
+    mode: "0644"
+    dest: /etc/fail2ban/jail.d/01-sshd.conf
+    content: |
+      [sshd]
+      enable = true
+      bantime = 90d
+
+- name: Ensure fail2ban service is started/enabled
+  ansible.builtin.service:
+    name: fail2ban
+    state: started
+    enabled: true
+

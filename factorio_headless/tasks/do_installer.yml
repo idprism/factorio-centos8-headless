@@ -8,6 +8,13 @@
     update: yes
     version: master
 
+- name: Factorio-init repo owner should be factorio
+  ansible.builtin.file:
+    dest: "{{ base_directory }}/{{ factorio_installer_folder }}"
+    owner: "factorio"
+    group: "factorio"
+    recurse: true
+
 # let's follow the readme..., but run actual factorio program last instead of first.
 
 # steps in readme:
@@ -34,13 +41,22 @@
 # I think the defaults are fine, but just in case you
 # wanted to use this role to modify the file, i've copied it
 # over to the files directory.
-#- name: deploy systemd unit changes
+#- name: Deploy systemd unit changes
 #  copy:
 #    src: factorio.service
 #    dst: "{{ base_directory }}/{{ factorio_installer_folder }}/extras/factorio.service"
-#    owner: factorio
-#    group: factorio
-#    mode: 644
+#    owner: "factorio"
+#    group: "factorio"
+#    mode: "0644"
+#
+- name: Copy Example factorio.service file
+  ansible.builtin.copy:
+    owner: "factorio"
+    group: "factorio"
+    mode: "0644"
+    src: "{{ base_directory }}/{{ factorio_installer_folder }}/extras/factorio.service.example"
+    dest: "{{ base_directory }}/{{ factorio_installer_folder }}/extras/factorio.service"
+    remote_src: true
 
 # I made a variable to gate this statement, cause someone may not be using systemd
 
@@ -57,6 +73,16 @@
     daemon_reload: yes
   when: service_file_created is success
 
+# I was originally going to do this block step by step but decided to import a template from a recent
+# build of factorio-init -- If the diff between config/config.example is too great, update this role
+- name: Create config file for factorio-init.
+  template:
+    src: config.j2
+    dest: "{{ base_directory }}/{{ factorio_installer_folder }}/config"
+    owner: factorio
+    group: factorio
+    mode: '0664'
+  notify: restart factorio systemd
 
 # install the headless server as factorio user to make sure nothing is owned by root that we have to change later.
 - name: get cracking -- install headless server as factorio user, using factorio-init
@@ -69,28 +95,29 @@
 
 - name: start, stop factorio after initial install, to create savegame file
   block:
-  - name: start factorio once
-    command:
-      cmd: /usr/local/bin/factorio start
-  - name: stop factorio once
-    command:
-      cmd: /usr/local/bin/factorio stop
+  - name: Stop factorio once
+    ansible.builtin.service:
+      service: factorio
+      state: "stopped"
+  - name: Start factorio once
+    ansible.builtin.service:
+      service: factorio
+      state: "started"
+  - name: Stop factorio once
+    ansible.builtin.service:
+      service: factorio
+      state: "stopped"
+  #- name: start factorio once
+  #  command:
+  #    cmd: /usr/local/bin/factorio start
+  #- name: stop factorio once
+  #  command:
+  #    cmd: /usr/local/bin/factorio stop
   when: factorio_initial_install.changed
-
-# I was originally going to do this block step by step but decided to import a template from a recent
-# build of factorio-init -- If the diff between config/config.example is too great, update this role
-- name: Create config file for factorio-init.
-  template:
-    src: config.j2
-    dest: "{{ base_directory }}/{{ factorio_installer_folder }}/config"
-    owner: factorio
-    group: factorio
-    mode: '0664'
-  notify: restart factorio systemd
 
 # start the systemd service
 - name: enable factorio systemd unit
   service:
     name: factorio
-    enabled: yes
+    enabled: true
 

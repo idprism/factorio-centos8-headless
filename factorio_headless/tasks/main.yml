@@ -21,3 +21,7 @@
 
 - name: Configure the primary configurator tool
   include_tasks: do_installer.yml
+
+- name: Configure anything else
+  include_tasks: do_systemconfig.yml
+
